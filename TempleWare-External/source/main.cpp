@@ -11,12 +11,8 @@
 
 #include <thread>
 
-int __stdcall wWinMain(
-    HINSTANCE instance,
-    HINSTANCE previousInstance,
-    PWSTR arguments,
-    int commandShow) {
-
+int __stdcall wWinMain(HINSTANCE instance, HINSTANCE previousInstance, PWSTR arguments, int commandShow)
+{
     if (!offsets::UpdateOffset())
         return EXIT_FAILURE;
 
@@ -34,21 +30,23 @@ int __stdcall wWinMain(
 
     bool windowVisible = true;
 
-    while (globals::isRunning) {
-        if (GetAsyncKeyState(VK_END) & 0x8000) {
+    while (globals::isRunning)
+    {
+        if (GetAsyncKeyState(VK_END) & 0x8000) 
+        {
             windowVisible = !windowVisible;
             ShowWindow(gui::window, windowVisible ? SW_SHOW : SW_HIDE);
             std::this_thread::sleep_for(std::chrono::milliseconds(200));
         }
 
-        if (windowVisible) {
+        if (windowVisible) 
+        {
             gui::BeginRender();
             gui::Render();
             gui::EndRender();
         }
-        else {
+        else
             std::this_thread::sleep_for(std::chrono::milliseconds(50));
-        }
     }
 
     gui::DestroyImGui();
