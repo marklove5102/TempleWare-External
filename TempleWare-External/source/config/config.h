@@ -16,23 +16,25 @@ namespace config
     class ConfigSystem
     {
     private:
-
         static std::filesystem::path GetConfigFolder()
         {
             char* userProfile = nullptr;
             size_t len = 0;
             errno_t err = _dupenv_s(&userProfile, &len, "USERPROFILE");
 
+            std::filesystem::path folder;
             if (err != 0 || userProfile == nullptr || len == 0)
             {
-                return ".templeware";
+                folder = ".templeware";
+            }
+            else
+            {
+                folder = userProfile;
+                free(userProfile);
+                folder /= ".templeware";
             }
 
-            std::filesystem::path folder = userProfile;
-
-            free(userProfile);
-
-            folder /= ".templeware";
+            folder /= "external";
 
             std::error_code ec;
             std::filesystem::create_directories(folder, ec);
@@ -43,7 +45,6 @@ namespace config
         static std::filesystem::path GetConfigPath(const std::string& configName)
         {
             auto folder = GetConfigFolder();
-
             return folder / (configName + ".json");
         }
 
@@ -64,7 +65,6 @@ namespace config
                     auto path = entry.path();
                     if (path.extension() == ".json")
                     {
-
                         list.push_back(path.stem().string());
                     }
                 }
@@ -74,7 +74,6 @@ namespace config
 
         static void Save(const std::string& configName)
         {
-
             nlohmann::json j;
             j["TriggerBot"] = globals::TriggerBot;
             j["TriggerBotKey"] = globals::TriggerBotKey;
@@ -86,7 +85,6 @@ namespace config
             j["TriggerBotIgnoreFlash"] = globals::TriggerBotIgnoreFlash;
 
             j["FOV"] = globals::FOV;
-
             j["Glow"] = globals::Glow;
 
             j["GlowColor"] = {
@@ -104,7 +102,6 @@ namespace config
             };
 
             j["NoFlashEnabled"] = globals::NoFlashEnabled;
-
             j["BunnyHopEnabled"] = globals::BunnyHopEnabled;
 
             auto filePath = GetConfigPath(configName);
@@ -132,9 +129,7 @@ namespace config
             globals::TriggerBot = j.value("TriggerBot", false);
             globals::TriggerBotKey = j.value("TriggerBotKey", VK_LSHIFT);
             {
-
                 auto keyNameString = j.value("TriggerBotKeyName", std::string("L-Shift"));
-
                 std::snprintf(globals::TriggerBotKeyName, sizeof(globals::TriggerBotKeyName), "%s", keyNameString.c_str());
             }
             globals::TriggerBotMode = j.value("TriggerBotMode", 0);
@@ -144,13 +139,11 @@ namespace config
             globals::TriggerBotIgnoreFlash = j.value("TriggerBotIgnoreFlash", false);
 
             globals::FOV = j.value("FOV", 90);
-
             globals::Glow = j.value("Glow", false);
 
             if (j.contains("GlowColor") && j["GlowColor"].is_array())
             {
                 auto arr = j["GlowColor"];
-
                 if (arr.size() == 4)
                 {
                     globals::GlowColor.x = arr[0].get<float>();
@@ -160,7 +153,6 @@ namespace config
                 }
             }
             globals::NoFlashEnabled = j.value("NoFlashEnabled", false);
-
             globals::BunnyHopEnabled = j.value("BunnyHopEnabled", false);
 
             if (j.contains("MenuAccentColor") && j["MenuAccentColor"].is_array())
@@ -174,7 +166,6 @@ namespace config
                     globals::MenuAccentColor.w = arr[3].get<float>();
                 }
             }
-
             ifs.close();
         }
 
