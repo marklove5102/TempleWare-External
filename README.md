@@ -15,7 +15,7 @@
 </p>
 
 ---
-### TempleWare-External is a free C++-based external cheat for Counter-Strike 2.
+### TempleWare-External is a free C++-based external for Counter-Strike 2.
 ---
 
 ### How to Build and Launch TempleWare-External
