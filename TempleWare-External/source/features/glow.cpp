@@ -16,10 +16,10 @@ namespace features {
         if (!entityList) return;
 
         for (int i = 1; i < 64; ++i) {
-            const uintptr_t listEntry = memory.Read<uintptr_t>(entityList + ((8 * (i & 0x7FFF)) >> 9) + 16);
+            const uintptr_t listEntry = memory.Read<uintptr_t>(entityList + (8 * (i >> 9)) + 16);
             if (!listEntry) continue;
 
-            const uintptr_t player = memory.Read<uintptr_t>(listEntry + 120 * (i & 0x1FF));
+            const uintptr_t player = memory.Read<uintptr_t>(listEntry + 112 * (i & 0x1FF));
             if (!player) continue;
 
             const int playerTeam = memory.Read<int>(player + offsets::m_iTeamNum);
@@ -31,7 +31,7 @@ namespace features {
             const uintptr_t listEntry2 = memory.Read<uintptr_t>(entityList + ((8 * (playerPawn & 0x7FFF)) >> 9) + 16);
             if (!listEntry2) continue;
 
-            const uintptr_t playerCsPawn = memory.Read<uintptr_t>(listEntry2 + 120 * (playerPawn & 0x1FF));
+            const uintptr_t playerCsPawn = memory.Read<uintptr_t>(listEntry2 + 112 * (playerPawn & 0x1FF));
             if (!playerCsPawn) continue;
 
             const int health = memory.Read<int>(playerCsPawn + offsets::m_iHealth);

@@ -56,7 +56,7 @@ namespace features
                 continue;
 
             std::uintptr_t entityList = memory.Read<std::uintptr_t>(globals::client + offsets::dwEntityList);
-            std::uintptr_t entity = memory.Read<std::uintptr_t>(memory.Read<std::uintptr_t>(entityList + 0x8 * (crosshairEntityIndex >> 9) + 0x10) + 120 * (crosshairEntityIndex & 0x1ff));
+            std::uintptr_t entity = memory.Read<std::uintptr_t>(memory.Read<std::uintptr_t>(entityList + 0x8 * (crosshairEntityIndex >> 9) + 0x10) + 112 * (crosshairEntityIndex & 0x1ff));
             if (!entity)
                 continue;
 
