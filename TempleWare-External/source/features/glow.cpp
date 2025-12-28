@@ -11,7 +11,7 @@ namespace features {
         const uintptr_t localPlayerController = memory.Read<uintptr_t>(globals::client + offsets::dwLocalPlayerController);
         if (!localPlayerController) return;
 
-        const int localTeam = memory.Read<int>(localPlayerController + offsets::m_iTeamNum);
+        const int localTeam = memory.Read<short>(localPlayerController + offsets::m_iTeamNum);
         const uintptr_t entityList = memory.Read<uintptr_t>(globals::client + offsets::dwEntityList);
         if (!entityList) return;
 
@@ -22,13 +22,13 @@ namespace features {
             const uintptr_t player = memory.Read<uintptr_t>(listEntry + 112 * (i & 0x1FF));
             if (!player) continue;
 
-            const int playerTeam = memory.Read<int>(player + offsets::m_iTeamNum);
+            const short playerTeam = memory.Read<short>(player + offsets::m_iTeamNum);
             if (playerTeam == localTeam) continue;
 
             const uint32_t playerPawn = memory.Read<uint32_t>(player + offsets::m_hPlayerPawn);
             if (!playerPawn) continue;
 
-            const uintptr_t listEntry2 = memory.Read<uintptr_t>(entityList + ((8 * (playerPawn & 0x7FFF)) >> 9) + 16);
+            const uintptr_t listEntry2 = memory.Read<uintptr_t>(entityList + 8 * ((playerPawn & 0x7FFF) >> 9) + 16);
             if (!listEntry2) continue;
 
             const uintptr_t playerCsPawn = memory.Read<uintptr_t>(listEntry2 + 112 * (playerPawn & 0x1FF));
