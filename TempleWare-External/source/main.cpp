@@ -32,7 +32,9 @@ int __stdcall wWinMain(HINSTANCE instance, HINSTANCE previousInstance, PWSTR arg
 
     while (globals::isRunning)
     {
-        if (GetAsyncKeyState(VK_END) & 0x8000) 
+        if ((GetAsyncKeyState(VK_END) & 0x8000)     || 
+            (GetAsyncKeyState(VK_INSERT) & 0x8000)  ||
+            (GetAsyncKeyState(VK_HOME) & 0x8000))
         {
             windowVisible = !windowVisible;
             ShowWindow(gui::window, windowVisible ? SW_SHOW : SW_HIDE);

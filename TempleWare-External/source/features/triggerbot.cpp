@@ -40,7 +40,7 @@ namespace features
             }
 
             std::uintptr_t localPlayer = memory.Read<std::uintptr_t>(globals::client + offsets::dwLocalPlayerPawn);
-            BYTE team = memory.Read<BYTE>(localPlayer + offsets::m_iTeamNum);
+            short team = memory.Read<short>(localPlayer + offsets::m_iTeamNum);
 
             if (!globals::TriggerBotIgnoreFlash) 
             {
@@ -56,12 +56,12 @@ namespace features
                 continue;
 
             std::uintptr_t entityList = memory.Read<std::uintptr_t>(globals::client + offsets::dwEntityList);
-            std::uintptr_t entity = memory.Read<std::uintptr_t>(memory.Read<std::uintptr_t>(entityList + 0x8 * (crosshairEntityIndex >> 9) + 0x10) + 120 * (crosshairEntityIndex & 0x1ff));
+            std::uintptr_t entity = memory.Read<std::uintptr_t>(memory.Read<std::uintptr_t>(entityList + 8 * (crosshairEntityIndex >> 9) + 16) + 112 * (crosshairEntityIndex & 0x1FF));
             if (!entity)
                 continue;
 
             // Skip teammate or dead target (optional)
-            if (globals::TriggerBotTeamCheck && team == memory.Read<BYTE>(entity + offsets::m_iTeamNum))
+            if (globals::TriggerBotTeamCheck && team == memory.Read<short>(entity + offsets::m_iTeamNum))
                 continue;
 
             if (memory.Read<int>(entity + offsets::m_iHealth) <= 0)

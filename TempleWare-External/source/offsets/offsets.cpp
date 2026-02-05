@@ -52,7 +52,7 @@ bool offsets::UpdateOffset()
     m_bGlowing=                     client_dllJson["CGlowProperty"]["fields"]["m_bGlowing"];
     m_bIsScoped=                    client_dllJson["C_CSPlayerPawn"]["fields"]["m_bIsScoped"];
     attack=                         buttonsJson["client.dll"]["attack"];
-    m_iIDEntIndex=                  client_dllJson["C_CSPlayerPawnBase"]["fields"]["m_iIDEntIndex"];;
+    m_iIDEntIndex=                  client_dllJson["C_CSPlayerPawn"]["fields"]["m_iIDEntIndex"];;
     flFlashDuration=                client_dllJson["C_CSPlayerPawnBase"]["fields"]["m_flFlashDuration"];
     m_iShotsFired =                 client_dllJson["C_CSPlayerPawn"]["fields"]["m_iShotsFired"];
     m_aimPunchAngle =               client_dllJson["C_CSPlayerPawn"]["fields"]["m_aimPunchAngle"];
