@@ -36,6 +36,7 @@ namespace offsets
     inline std::ptrdiff_t m_entitySpottedState;
     inline std::ptrdiff_t m_vecViewOffset;
     inline std::ptrdiff_t m_fFlags;
+    inline std::ptrdiff_t m_bIsLocalPlayerController;
 
     bool UpdateOffset();
 }

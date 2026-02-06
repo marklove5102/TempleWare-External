@@ -16,7 +16,7 @@ int __stdcall wWinMain(HINSTANCE instance, HINSTANCE previousInstance, PWSTR arg
     if (!offsets::UpdateOffset())
         return EXIT_FAILURE;
 
-    const auto memory = Memory("cs2.exe");
+    static const auto memory = Memory("cs2.exe");
 
     globals::client = memory.GetModuleAddress("client.dll");
 
@@ -29,17 +29,35 @@ int __stdcall wWinMain(HINSTANCE instance, HINSTANCE previousInstance, PWSTR arg
     gui::CreateImGui();
 
     bool windowVisible = true;
+    static bool endKeyPressed = false;
 
-    while (globals::isRunning)
+    while (globals::isRunning && gui::isRunning)
     {
-        if ((GetAsyncKeyState(VK_END) & 0x8000)     || 
-            (GetAsyncKeyState(VK_INSERT) & 0x8000)  ||
-            (GetAsyncKeyState(VK_HOME) & 0x8000))
+        bool endKeyDown = (GetAsyncKeyState(VK_END) & 0x8000) != 0;
+        bool insertKeyDown = (GetAsyncKeyState(VK_INSERT) & 0x8000) != 0;
+        bool homeKeyDown = (GetAsyncKeyState(VK_HOME) & 0x8000) != 0;
+
+        if (endKeyDown && !endKeyPressed)
+        {
+            endKeyPressed = true;
+            globals::isRunning = false;
+            gui::isRunning = false;
+            break;
+        }
+        else if (!endKeyDown)
+        {
+            endKeyPressed = false;
+        }
+
+        if (insertKeyDown || homeKeyDown)
         {
             windowVisible = !windowVisible;
             ShowWindow(gui::window, windowVisible ? SW_SHOW : SW_HIDE);
             std::this_thread::sleep_for(std::chrono::milliseconds(200));
         }
+
+        if (!globals::isRunning || !gui::isRunning)
+            break;
 
         if (windowVisible) 
         {
@@ -50,6 +68,9 @@ int __stdcall wWinMain(HINSTANCE instance, HINSTANCE previousInstance, PWSTR arg
         else
             std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
+
+    globals::isRunning = false;
+    gui::isRunning = false;
 
     gui::DestroyImGui();
     gui::DestroyDevice();

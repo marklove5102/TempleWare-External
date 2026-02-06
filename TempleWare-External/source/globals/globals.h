@@ -26,9 +26,28 @@ namespace globals
     // Glow
     inline bool Glow = false;                     
     inline ImVec4 GlowColor = ImVec4(0.0f, 0.0f, 1.0f, 1.0f);
+    inline bool GlowShowTeam = false;
+    inline bool GlowHealthBased = false;
+    inline bool GlowTeamBased = false;
+    inline ImVec4 GlowTeamColor = ImVec4(0.0f, 1.0f, 0.0f, 1.0f);
+    inline ImVec4 GlowEnemyColor = ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
     
     // NoFlash
-    inline bool NoFlashEnabled = false;          
+    inline bool NoFlashEnabled = false;
+
+    // RCS
+    inline bool RCSEnabled = false;
+    inline int RCSStrength = 100;
+    inline bool RCSWhileScoped = false;
+
+    // Aimbot
+    inline bool AimbotEnabled = false;
+    inline int AimbotKey = VK_RBUTTON;
+    inline char AimbotKeyName[64] = "R-Button";
+    inline int AimbotBone = 0;
+    inline int AimbotFOV = 90;
+    inline float AimbotSmoothness = 10.0f;
+    inline bool AimbotTeamCheck = true;          
 
     // Application state
     inline bool isRunning = true;            

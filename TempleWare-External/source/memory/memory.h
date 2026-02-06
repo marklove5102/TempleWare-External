@@ -21,7 +21,7 @@ public:
 			if (entry.szExeFile == processName) 
 			{
 				processId_ = entry.th32ProcessID;
-				processHandle_ = OpenProcess(PROCESS_ALL_ACCESS, FALSE, processId_);
+				processHandle_ = OpenProcess(PROCESS_ALL_ACCESS, FALSE, static_cast<DWORD>(processId_));
 				break;
 			}
 		}
@@ -38,7 +38,7 @@ public:
 	std::uintptr_t GetModuleAddress(const std::string& moduleName) const noexcept
 	{
 		MODULEENTRY32 entry = { sizeof(MODULEENTRY32) };
-		auto snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, processId_);
+		auto snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, static_cast<DWORD>(processId_));
 		std::uintptr_t result = 0;
 
 		while (Module32Next(snapshot, &entry)) 

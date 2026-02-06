@@ -86,12 +86,29 @@ namespace config
 
             j["FOV"] = globals::FOV;
             j["Glow"] = globals::Glow;
+            j["GlowShowTeam"] = globals::GlowShowTeam;
+            j["GlowHealthBased"] = globals::GlowHealthBased;
+            j["GlowTeamBased"] = globals::GlowTeamBased;
 
             j["GlowColor"] = {
                 globals::GlowColor.x,
                 globals::GlowColor.y,
                 globals::GlowColor.z,
                 globals::GlowColor.w
+            };
+
+            j["GlowTeamColor"] = {
+                globals::GlowTeamColor.x,
+                globals::GlowTeamColor.y,
+                globals::GlowTeamColor.z,
+                globals::GlowTeamColor.w
+            };
+
+            j["GlowEnemyColor"] = {
+                globals::GlowEnemyColor.x,
+                globals::GlowEnemyColor.y,
+                globals::GlowEnemyColor.z,
+                globals::GlowEnemyColor.w
             };
 
             j["MenuAccentColor"] = {
@@ -103,6 +120,16 @@ namespace config
 
             j["NoFlashEnabled"] = globals::NoFlashEnabled;
             j["BunnyHopEnabled"] = globals::BunnyHopEnabled;
+            j["RCSEnabled"] = globals::RCSEnabled;
+            j["RCSStrength"] = globals::RCSStrength;
+            j["RCSWhileScoped"] = globals::RCSWhileScoped;
+            j["AimbotEnabled"] = globals::AimbotEnabled;
+            j["AimbotKey"] = globals::AimbotKey;
+            j["AimbotKeyName"] = std::string(globals::AimbotKeyName);
+            j["AimbotBone"] = globals::AimbotBone;
+            j["AimbotFOV"] = globals::AimbotFOV;
+            j["AimbotSmoothness"] = globals::AimbotSmoothness;
+            j["AimbotTeamCheck"] = globals::AimbotTeamCheck;
 
             auto filePath = GetConfigPath(configName);
             std::ofstream ofs(filePath);
@@ -140,6 +167,9 @@ namespace config
 
             globals::FOV = j.value("FOV", 90);
             globals::Glow = j.value("Glow", false);
+            globals::GlowShowTeam = j.value("GlowShowTeam", false);
+            globals::GlowHealthBased = j.value("GlowHealthBased", false);
+            globals::GlowTeamBased = j.value("GlowTeamBased", false);
 
             if (j.contains("GlowColor") && j["GlowColor"].is_array())
             {
@@ -152,8 +182,46 @@ namespace config
                     globals::GlowColor.w = arr[3].get<float>();
                 }
             }
+
+            if (j.contains("GlowTeamColor") && j["GlowTeamColor"].is_array())
+            {
+                auto arr = j["GlowTeamColor"];
+                if (arr.size() == 4)
+                {
+                    globals::GlowTeamColor.x = arr[0].get<float>();
+                    globals::GlowTeamColor.y = arr[1].get<float>();
+                    globals::GlowTeamColor.z = arr[2].get<float>();
+                    globals::GlowTeamColor.w = arr[3].get<float>();
+                }
+            }
+
+            if (j.contains("GlowEnemyColor") && j["GlowEnemyColor"].is_array())
+            {
+                auto arr = j["GlowEnemyColor"];
+                if (arr.size() == 4)
+                {
+                    globals::GlowEnemyColor.x = arr[0].get<float>();
+                    globals::GlowEnemyColor.y = arr[1].get<float>();
+                    globals::GlowEnemyColor.z = arr[2].get<float>();
+                    globals::GlowEnemyColor.w = arr[3].get<float>();
+                }
+            }
+
             globals::NoFlashEnabled = j.value("NoFlashEnabled", false);
             globals::BunnyHopEnabled = j.value("BunnyHopEnabled", false);
+            globals::RCSEnabled = j.value("RCSEnabled", false);
+            globals::RCSStrength = j.value("RCSStrength", 100);
+            globals::RCSWhileScoped = j.value("RCSWhileScoped", false);
+            globals::AimbotEnabled = j.value("AimbotEnabled", false);
+            globals::AimbotKey = j.value("AimbotKey", VK_RBUTTON);
+            {
+                auto keyNameString = j.value("AimbotKeyName", std::string("R-Button"));
+                std::snprintf(globals::AimbotKeyName, sizeof(globals::AimbotKeyName), "%s", keyNameString.c_str());
+            }
+            globals::AimbotBone = j.value("AimbotBone", 0);
+            globals::AimbotFOV = j.value("AimbotFOV", 90);
+            globals::AimbotSmoothness = j.value("AimbotSmoothness", 10.0f);
+            globals::AimbotTeamCheck = j.value("AimbotTeamCheck", true);
 
             if (j.contains("MenuAccentColor") && j["MenuAccentColor"].is_array())
             {

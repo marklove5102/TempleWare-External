@@ -1,9 +1,9 @@
 #pragma once
 #include <d3d9.h>
+#include <windows.h>
 
 namespace gui
 {
-
     constexpr int WIDTH = 500;
     constexpr int HEIGHT = 300;
     inline bool isRunning = true;

@@ -67,6 +67,9 @@ bool offsets::UpdateOffset()
     m_entitySpottedState=           client_dllJson["C_CSPlayerPawn"]["fields"]["m_entitySpottedState"];
     m_vecViewOffset=                client_dllJson["C_BaseModelEntity"]["fields"]["m_vecViewOffset"];
     m_fFlags=                       client_dllJson["C_BaseEntity"]["fields"]["m_fFlags"];
+    
+    if (client_dllJson["CBasePlayerController"]["fields"].contains("m_bIsLocalPlayerController"))
+        m_bIsLocalPlayerController=     client_dllJson["CBasePlayerController"]["fields"]["m_bIsLocalPlayerController"];
 
     return 1;
 

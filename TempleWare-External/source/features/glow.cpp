@@ -2,6 +2,7 @@
 #include "../globals/globals.h"
 #include "../offsets/offsets.h"
 #include <thread>
+#include <algorithm>
 
 namespace features {
     void Glow::Run(const Memory& memory) noexcept 
@@ -23,7 +24,8 @@ namespace features {
             if (!player) continue;
 
             const short playerTeam = memory.Read<short>(player + offsets::m_iTeamNum);
-            if (playerTeam == localTeam) continue;
+            
+            if (playerTeam == localTeam && !globals::GlowShowTeam) continue;
 
             const uint32_t playerPawn = memory.Read<uint32_t>(player + offsets::m_hPlayerPawn);
             if (!playerPawn) continue;
@@ -37,7 +39,32 @@ namespace features {
             const int health = memory.Read<int>(playerCsPawn + offsets::m_iHealth);
             if (health < 1) continue;
 
-            const ImVec4& color = globals::GlowColor;
+            ImVec4 color;
+            
+            if (globals::GlowHealthBased)
+            {
+                float healthPercent = std::clamp(health / 100.0f, 0.0f, 1.0f);
+                color.x = 1.0f - healthPercent;
+                color.y = healthPercent;
+                color.z = 0.0f;
+                color.w = 1.0f;
+            }
+            else if (globals::GlowTeamBased)
+            {
+                if (playerTeam == localTeam)
+                {
+                    color = globals::GlowTeamColor;
+                }
+                else
+                {
+                    color = globals::GlowEnemyColor;
+                }
+            }
+            else
+            {
+                color = globals::GlowColor;
+            }
+
             const DWORD colorArgb = (
                 (static_cast<DWORD>(color.w * 255) << 24) |
                 (static_cast<DWORD>(color.z * 255) << 16) |

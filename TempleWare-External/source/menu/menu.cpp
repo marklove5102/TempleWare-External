@@ -1,13 +1,15 @@
-#pragma once
-
-#include <d3d9.h>
-#include <string>
-#include <windows.h>
+#include "menu.h"
 #include "../globals/globals.h"
 #include "../config/config.h"
 #include "../../external/imgui/imgui.h"
 #include "../../external/imgui/imgui_impl_dx9.h"
 #include "../../external/imgui/imgui_impl_win32.h"
+#include <d3d9.h>
+#include <string>
+#include <windows.h>
+#include <algorithm>
+#include <cstring>
+#include <vector>
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(
     HWND, UINT, WPARAM, LPARAM
@@ -15,33 +17,6 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(
 
 namespace gui
 {
-
-    constexpr int WIDTH = 500;
-    constexpr int HEIGHT = 300;
-
-    inline bool isRunning = true;
-    inline HWND  window = nullptr;
-    inline WNDCLASSEX windowClass = { };
-    inline POINTS position = { };
-
-    inline PDIRECT3D9              d3d = nullptr;
-    inline LPDIRECT3DDEVICE9       device = nullptr;
-    inline D3DPRESENT_PARAMETERS   presentParameters = { };
-
-    void CreateHWindow(const char* windowName) noexcept;
-    void DestroyHWindow() noexcept;
-    bool CreateDevice() noexcept;
-    void ResetDevice() noexcept;
-    void DestroyDevice() noexcept;
-    void CreateImGui() noexcept;
-    void DestroyImGui() noexcept;
-    void BeginRender() noexcept;
-    void EndRender() noexcept;
-    void Render() noexcept;
-
-    void SetupImGuiStyle() noexcept;
-    void ApplyCustomStyle() noexcept;
-
     static std::string GetKeyName(int vk)
     {
         UINT scanCode = MapVirtualKeyA(vk, MAPVK_VK_TO_VSC);
@@ -242,14 +217,21 @@ namespace gui
         ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
         ImGui::SetNextWindowSize(ImVec2(static_cast<float>(WIDTH), static_cast<float>(HEIGHT)), ImGuiCond_Always);
 
+        bool windowOpen = globals::isRunning && gui::isRunning;
         ImGui::Begin("TempleWare - External                                                             templecheats.xyz",
-            &globals::isRunning,
+            &windowOpen,
             ImGuiWindowFlags_NoResize |
             ImGuiWindowFlags_NoSavedSettings |
             ImGuiWindowFlags_NoCollapse |
             ImGuiWindowFlags_NoMove |
             ImGuiWindowFlags_NoScrollbar
         );
+
+        if (!windowOpen)
+        {
+            globals::isRunning = false;
+            gui::isRunning = false;
+        }
 
         static int currentTab = 0;
         {
@@ -303,6 +285,48 @@ namespace gui
                 ImGui::Checkbox("TeamCheck", &globals::TriggerBotTeamCheck);
                 ImGui::Checkbox("IgnoreFlash", &globals::TriggerBotIgnoreFlash);
             }
+            
+            ImGui::Separator();
+            ImGui::Checkbox("RCS", &globals::RCSEnabled);
+            if (globals::RCSEnabled)
+            {
+                ImGui::SliderInt("RCS Strength", &globals::RCSStrength, 1, 100);
+                ImGui::Checkbox("RCS While Scoped", &globals::RCSWhileScoped);
+            }
+            ImGui::Separator();
+
+            ImGui::Checkbox("Aimbot", &globals::AimbotEnabled);
+            if (globals::AimbotEnabled)
+            {
+                ImGui::Text("Aimbot Key: ");
+                ImGui::SameLine();
+                if (ImGui::Button(globals::AimbotKeyName))
+                {
+                    ImGui::OpenPopup("##SelectAimbotKey");
+                }
+                if (ImGui::BeginPopup("##SelectAimbotKey"))
+                {
+                    ImGuiIO& io = ImGui::GetIO();
+                    ImGui::Text("Press a key to select it...");
+                    for (int i = 0; i < 256; i++)
+                    {
+                        if (ImGui::IsKeyPressed(i))
+                        {
+                            globals::AimbotKey = i;
+                            std::string keyName = GetKeyName(i);
+                            snprintf(globals::AimbotKeyName, sizeof(globals::AimbotKeyName), "%s", keyName.c_str());
+                            ImGui::CloseCurrentPopup();
+                        }
+                    }
+                    ImGui::EndPopup();
+                }
+
+                const char* boneItems[] = { "Head", "Neck", "Chest" };
+                ImGui::Combo("Bone", &globals::AimbotBone, boneItems, IM_ARRAYSIZE(boneItems));
+                ImGui::SliderInt("FOV", &globals::AimbotFOV, 1, 180);
+                ImGui::SliderFloat("Smoothness", &globals::AimbotSmoothness, 1.0f, 100.0f);
+                ImGui::Checkbox("Team Check", &globals::AimbotTeamCheck);
+            }
         }
 
         else if (currentTab == 1)
@@ -316,7 +340,19 @@ namespace gui
             ImGui::Checkbox("Glow##enable", &globals::Glow);
             if (globals::Glow)
             {
-                ImGui::ColorEdit4("Glow Color", (float*)&globals::GlowColor, ImGuiColorEditFlags_NoInputs);
+                ImGui::Checkbox("Show Team", &globals::GlowShowTeam);
+                ImGui::Checkbox("Health Based", &globals::GlowHealthBased);
+                ImGui::Checkbox("Team Based", &globals::GlowTeamBased);
+                
+                if (!globals::GlowHealthBased && !globals::GlowTeamBased)
+                {
+                    ImGui::ColorEdit4("Glow Color", (float*)&globals::GlowColor, ImGuiColorEditFlags_NoInputs);
+                }
+                else if (globals::GlowTeamBased)
+                {
+                    ImGui::ColorEdit4("Team Color", (float*)&globals::GlowTeamColor, ImGuiColorEditFlags_NoInputs);
+                    ImGui::ColorEdit4("Enemy Color", (float*)&globals::GlowEnemyColor, ImGuiColorEditFlags_NoInputs);
+                }
             }
             ImGui::Separator();
 

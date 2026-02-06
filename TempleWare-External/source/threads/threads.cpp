@@ -5,6 +5,8 @@
 #include "../menu/menu.h"
 #include "../features/bhop.h"
 #include "../features/glow.h"
+#include "../features/rcs.h"
+#include "../features/aimbot.h"
 
 #include "../offsets/offsets.h"
 #include "../globals/globals.h"
@@ -38,6 +40,10 @@ namespace threads {
         {
             if (globals::TriggerBot)
                 features::TriggerBot::Run(memory);
+            if (globals::RCSEnabled)
+                features::RCS::Run(memory);
+            if (globals::AimbotEnabled)
+                features::Aimbot::Run(memory);
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
     }
