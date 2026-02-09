@@ -6,7 +6,7 @@ namespace features
 {
 	void Bhop::Run(const Memory& memory) noexcept
 	{
-		if (!globals::BunnyHopEnabled)
+		if (!globals::BunnyHopEnabled || globals::client == 0)
 			return;
 
 		std::uintptr_t localPlayer = memory.Read<std::uintptr_t>(globals::client + offsets::dwLocalPlayerPawn);

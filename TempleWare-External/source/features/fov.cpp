@@ -7,6 +7,9 @@ namespace features
 {
     void FOVManager::AdjustFOV(const Memory& memory) noexcept
     {
+        if (globals::client == 0)
+            return;
+
         if (globals::lastFOV != globals::FOV)
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(100));

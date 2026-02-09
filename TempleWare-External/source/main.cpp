@@ -1,8 +1,3 @@
-/************************************************************************************************
- *                                          Temple Cheat                                        *
- *                     (c) 2023-2024 Temple Client Cheats Team. All rights reserved.            *
- ************************************************************************************************/
-
 #include "menu/menu.h"
 #include "memory/memory.h"
 #include "globals/globals.h"
@@ -14,11 +9,34 @@
 int __stdcall wWinMain(HINSTANCE instance, HINSTANCE previousInstance, PWSTR arguments, int commandShow)
 {
     if (!offsets::UpdateOffset())
+    {
+        MessageBoxA(nullptr, "Failed to load offsets. Please check your internet connection and try again.", "TempleWare External - Error", MB_OK | MB_ICONERROR);
         return EXIT_FAILURE;
+    }
 
     static const auto memory = Memory("cs2.exe");
 
+    if (!memory.IsValid())
+    {
+        DWORD error = GetLastError();
+        char errorMsg[256];
+        snprintf(errorMsg, sizeof(errorMsg), 
+            "Failed to attach to cs2.exe.\n\n"
+            "Please ensure:\n"
+            "1. Counter-Strike 2 is running\n"
+            "2. You have sufficient permissions (try running as Administrator)\n"
+            "3. No antivirus is blocking the application\n\n"
+            "Error code: %lu", error);
+        MessageBoxA(nullptr, errorMsg, "TempleWare External - Error", MB_OK | MB_ICONERROR);
+        return EXIT_FAILURE;
+    }
+
     globals::client = memory.GetModuleAddress("client.dll");
+    if (globals::client == 0)
+    {
+        MessageBoxA(nullptr, "Failed to find client.dll module. Please make sure Counter-Strike 2 is running.", "TempleWare External - Error", MB_OK | MB_ICONERROR);
+        return EXIT_FAILURE;
+    }
 
     std::thread(threads::RunMiscThread, std::ref(memory)).detach();
     std::thread(threads::RunVisualThread, std::ref(memory)).detach();

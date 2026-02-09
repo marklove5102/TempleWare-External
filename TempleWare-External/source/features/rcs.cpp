@@ -29,6 +29,12 @@ namespace features
             return;
         }
 
+        if (globals::client == 0)
+        {
+            oldAimPunch = { 0.0f, 0.0f, 0.0f };
+            return;
+        }
+
         std::uintptr_t localPlayer = memory.Read<std::uintptr_t>(globals::client + offsets::dwLocalPlayerPawn);
         if (!localPlayer)
         {
@@ -60,10 +66,16 @@ namespace features
         if (punchDelta.x == 0.0f && punchDelta.y == 0.0f)
             return;
 
-        if (offsets::dwViewAngles == 0)
+        if (offsets::dwCSGOInput == 0)
             return;
 
-        std::uintptr_t viewAnglesAddr = globals::client + offsets::dwViewAngles;
+        std::uintptr_t csgoInput = memory.Read<std::uintptr_t>(globals::client + offsets::dwCSGOInput);
+        if (!csgoInput)
+            return;
+
+        std::ptrdiff_t viewAnglesOffset = offsets::dwViewAngles - offsets::dwCSGOInput;
+        std::uintptr_t viewAnglesAddr = csgoInput + viewAnglesOffset;
+        
         Vector3 viewAngles = memory.Read<Vector3>(viewAnglesAddr);
 
         viewAngles.x -= (punchDelta.x * 2.0f) * (globals::RCSStrength / 100.0f);

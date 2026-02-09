@@ -62,6 +62,9 @@ namespace features
         if (!keyDown)
             return;
 
+        if (globals::client == 0)
+            return;
+
         std::uintptr_t localPlayer = memory.Read<std::uintptr_t>(globals::client + offsets::dwLocalPlayerPawn);
         if (!localPlayer)
             return;
@@ -75,10 +78,17 @@ namespace features
         Vector3 localOrigin = memory.Read<Vector3>(localPlayer + offsets::m_vOldOrigin);
         Vector3 localEyePos = { localOrigin.x + localViewOffset.x, localOrigin.y + localViewOffset.y, localOrigin.z + localViewOffset.z };
 
-        if (offsets::dwViewAngles == 0)
+        if (offsets::dwCSGOInput == 0)
             return;
 
-        Vector3 viewAngles = memory.Read<Vector3>(globals::client + offsets::dwViewAngles);
+        std::uintptr_t csgoInput = memory.Read<std::uintptr_t>(globals::client + offsets::dwCSGOInput);
+        if (!csgoInput)
+            return;
+
+        std::ptrdiff_t viewAnglesOffset = offsets::dwViewAngles - offsets::dwCSGOInput;
+        std::uintptr_t viewAnglesAddr = csgoInput + viewAnglesOffset;
+        
+        Vector3 viewAngles = memory.Read<Vector3>(viewAnglesAddr);
 
         std::uintptr_t entityList = memory.Read<std::uintptr_t>(globals::client + offsets::dwEntityList);
         if (!entityList)
@@ -170,7 +180,7 @@ namespace features
             while (viewAngles.y > 180.0f) viewAngles.y -= 360.0f;
             while (viewAngles.y < -180.0f) viewAngles.y += 360.0f;
 
-            memory.Write<Vector3>(globals::client + offsets::dwViewAngles, viewAngles);
+            memory.Write<Vector3>(viewAnglesAddr, viewAngles);
         }
     }
 }

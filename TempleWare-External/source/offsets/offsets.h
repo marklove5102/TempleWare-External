@@ -7,14 +7,15 @@ using json = nlohmann::json;
 
 namespace offsets 
 {
-    // Game offsets
     inline std::ptrdiff_t dwLocalPlayerPawn;
     inline std::ptrdiff_t dwLocalPlayerController;
     inline std::ptrdiff_t dwEntityList;
     inline std::ptrdiff_t dwViewMatrix;
     inline std::ptrdiff_t dwViewAngles;
+    inline std::ptrdiff_t dwCSGOInput;
+    
+    inline std::ptrdiff_t m_ViewAngles;
 
-    // Player details
     inline std::ptrdiff_t m_pCameraServices;
     inline std::ptrdiff_t m_glowColorOverride;
     inline std::ptrdiff_t m_iFOV;
@@ -26,7 +27,6 @@ namespace offsets
     inline std::ptrdiff_t m_iShotsFired;
     inline std::ptrdiff_t m_aimPunchAngle;
 
-    // Entity details
     inline std::ptrdiff_t m_hPawn;
     inline std::ptrdiff_t m_hPlayerPawn;
     inline std::ptrdiff_t m_Glow;

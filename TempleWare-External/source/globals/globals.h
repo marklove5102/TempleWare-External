@@ -9,7 +9,6 @@
 namespace globals 
 {
     
-    // TriggerBot
     inline bool TriggerBot = false;       
     inline int TriggerBotKey = VK_LSHIFT;    
     inline char TriggerBotKeyName[64] = "L-Shift"; 
@@ -19,11 +18,9 @@ namespace globals
     inline bool TriggerBotTeamCheck = true;  
     inline bool TriggerBotIgnoreFlash = false;  
 
-    // Fov
     inline int FOV = 90;
     inline int lastFOV = 90;
 
-    // Glow
     inline bool Glow = false;                     
     inline ImVec4 GlowColor = ImVec4(0.0f, 0.0f, 1.0f, 1.0f);
     inline bool GlowShowTeam = false;
@@ -32,15 +29,12 @@ namespace globals
     inline ImVec4 GlowTeamColor = ImVec4(0.0f, 1.0f, 0.0f, 1.0f);
     inline ImVec4 GlowEnemyColor = ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
     
-    // NoFlash
     inline bool NoFlashEnabled = false;
 
-    // RCS
     inline bool RCSEnabled = false;
     inline int RCSStrength = 100;
     inline bool RCSWhileScoped = false;
 
-    // Aimbot
     inline bool AimbotEnabled = false;
     inline int AimbotKey = VK_RBUTTON;
     inline char AimbotKeyName[64] = "R-Button";
@@ -49,14 +43,11 @@ namespace globals
     inline float AimbotSmoothness = 10.0f;
     inline bool AimbotTeamCheck = true;          
 
-    // Application state
     inline bool isRunning = true;            
     inline std::uintptr_t client = 0;     
 
-    // Misc
     inline bool BunnyHopEnabled = false;     
 
-    // Menu
     inline bool MenuVisible = true;             
     inline int ShowMenuKey = VK_END; 
     inline ImVec4 MenuAccentColor = ImVec4(0.0f, 0.4f, 1.0f, 1.0f);

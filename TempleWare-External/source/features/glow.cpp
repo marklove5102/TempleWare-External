@@ -9,12 +9,17 @@ namespace features {
     {
         if (!globals::Glow) return;
 
+        if (globals::client == 0)
+            return;
+
         const uintptr_t localPlayerController = memory.Read<uintptr_t>(globals::client + offsets::dwLocalPlayerController);
-        if (!localPlayerController) return;
+        if (!localPlayerController) 
+            return;
 
         const int localTeam = memory.Read<short>(localPlayerController + offsets::m_iTeamNum);
         const uintptr_t entityList = memory.Read<uintptr_t>(globals::client + offsets::dwEntityList);
-        if (!entityList) return;
+        if (!entityList) 
+            return;
 
         for (int i = 1; i < 64; ++i) {
             const uintptr_t listEntry = memory.Read<uintptr_t>(entityList + (8 * (i >> 9)) + 16);

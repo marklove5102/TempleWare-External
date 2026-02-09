@@ -9,7 +9,7 @@ namespace features
     void TriggerBot::Run(const Memory& memory) noexcept {
         while (globals::isRunning) 
         {
-            if (!globals::TriggerBot) 
+            if (!globals::TriggerBot || globals::client == 0) 
             {
                 std::this_thread::sleep_for(std::chrono::milliseconds(20));
                 continue;
@@ -40,6 +40,9 @@ namespace features
             }
 
             std::uintptr_t localPlayer = memory.Read<std::uintptr_t>(globals::client + offsets::dwLocalPlayerPawn);
+            if (!localPlayer)
+                continue;
+
             short team = memory.Read<short>(localPlayer + offsets::m_iTeamNum);
 
             if (!globals::TriggerBotIgnoreFlash) 
@@ -52,25 +55,26 @@ namespace features
             }
 
             int crosshairEntityIndex = memory.Read<int>(localPlayer + offsets::m_iIDEntIndex);
-            if (crosshairEntityIndex == 0)
+            if (crosshairEntityIndex <= 0)
                 continue;
 
             std::uintptr_t entityList = memory.Read<std::uintptr_t>(globals::client + offsets::dwEntityList);
+            if (!entityList)
+                continue;
+
             std::uintptr_t entity = memory.Read<std::uintptr_t>(memory.Read<std::uintptr_t>(entityList + 8 * (crosshairEntityIndex >> 9) + 16) + 112 * (crosshairEntityIndex & 0x1FF));
             if (!entity)
                 continue;
 
-            // Skip teammate or dead target (optional)
             if (globals::TriggerBotTeamCheck && team == memory.Read<short>(entity + offsets::m_iTeamNum))
                 continue;
 
             if (memory.Read<int>(entity + offsets::m_iHealth) <= 0)
                 continue;
 
-            // Simulate shooting
-            memory.Write<int>(globals::client + offsets::attack, 65537); // Set attack command
+            memory.Write<int>(globals::client + offsets::attack, 65537);
             std::this_thread::sleep_for(std::chrono::milliseconds(globals::TriggerBotDelay));
-            memory.Write<int>(globals::client + offsets::attack, 256);   // Clear attack command
+            memory.Write<int>(globals::client + offsets::attack, 256);
             std::this_thread::sleep_for(std::chrono::milliseconds(globals::TriggerBotDelay));
         }
     }
