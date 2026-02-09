@@ -27,7 +27,7 @@
    - Find the `TempleWare-External.exe` in the `\Release\x64\` folder.
 
 2. **Run the Executable:**
-   - Double-click the `TempleWare-External` file to launch it.
+   - Double-click the `TempleWare-External` file to launch it as administrator.
    - The tool will handle any necessary processes automatically.
 
 3. **Play CS2:**
